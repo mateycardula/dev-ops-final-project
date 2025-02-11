@@ -1,0 +1,16 @@
+version: "3"
+services:
+  devops-db:
+    image: "postgres:latest"
+    container_name: "flash_cards_app"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=flashcards
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
