@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: flashcards-pv
+  namespace: flashcards
 spec:
   capacity:
     storage: 1Gi
@@ -16,6 +17,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: flashcards-pvc
+  namespace: flashcards
 spec:
   accessModes:
     - ReadWriteOnce
