@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>mk.ukim.finki.devops</groupId>
     <artifactId>flash-cards</artifactId>
@@ -27,6 +27,7 @@
         <url/>
     </scm>
     <properties>
+        <start-class>mk.ukim.finki.devops.flashcards.FlashCardsApplication</start-class>
         <java.version>17</java.version>
     </properties>
     <dependencies>

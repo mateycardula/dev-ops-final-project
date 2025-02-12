@@ -12,5 +12,18 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
+  flashcard-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - devops-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://devops-db:5432/flashcards
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+    ports:
+      - "8080:8080"
+
 volumes:
   postgres-data:

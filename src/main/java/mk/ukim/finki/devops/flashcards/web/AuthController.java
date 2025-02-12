@@ -58,10 +58,10 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             model.addAttribute("username", username);
-            return "redirect:/"; // ✅ Redirect to dashboard/home after login
+            return "redirect:/";
         } catch (BadCredentialsException e) {
             model.addAttribute("errorMessage", "Invalid username or password");
-            return "login"; // ✅ Show error on the login page
+            return "login";
         }
     }
 
