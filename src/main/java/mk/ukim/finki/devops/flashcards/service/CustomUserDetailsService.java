@@ -1,5 +1,4 @@
 package mk.ukim.finki.devops.flashcards.service;
-import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.devops.flashcards.models.AppUser;
 import mk.ukim.finki.devops.flashcards.repository.AppUserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -35,6 +36,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     public AppUser saveUser(AppUser user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return appUserRepository.save(user);
+    }
+
+    public Optional<AppUser> getUserByUsername(String username) {
+        return appUserRepository.findByUsername(username);
     }
 }
 

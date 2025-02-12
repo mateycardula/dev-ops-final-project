@@ -18,6 +18,9 @@
       margin: 5px 0;
       background: #f8f9fa;
     }
+    .btn-add-flashcard {
+      display: none; /* Initially hidden */
+    }
   </style>
 </head>
 <body class="container mt-4">
@@ -30,14 +33,21 @@
 
 <hr>
 
-<h3>Your Collections</h3>
+<div class="d-flex justify-content-between align-items-center">
+  <h3>Your Collections</h3>
+  <a href="/collections/new" class="btn btn-primary">+ Add Collection</a>
+</div>
+
 <div id="collections-list" class="row">
-  <!-- Collections will be dynamically loaded here -->
 </div>
 
 <hr>
 
-<h3>Flash Cards</h3>
+<div class="d-flex justify-content-between align-items-center">
+  <h3>Flash Cards</h3>
+  <a id="add-flashcard-btn" href="#" class="btn btn-success btn-add-flashcard">+ Add Flash Card</a> <!-- ✅ Add Flash Card Button -->
+</div>
+
 <div id="flashcards-container">
   <p>Select a collection to view its flash cards.</p>
 </div>
@@ -45,23 +55,27 @@
 <script>
   $(document).ready(function () {
     fetchCollections();
+    let selectedCollectionId = null;
 
     function fetchCollections() {
       $.get("/api/collections", function (collections) {
         let collectionHtml = '';
         collections.forEach(collection => {
           collectionHtml += `
-                            <div class="col-md-4">
-                                <div class="card collection-card p-3 mb-3" data-id="${collection.id}">
-                                    <h5 class="card-title">${collection.name}</h5>
-                                </div>
-                            </div>`;
+                        <div class="col-md-4">
+                            <div class="card collection-card p-3 mb-3" data-id="${collection.id}">
+                                <h5 class="card-title">${collection.name}</h5>
+                            </div>
+                        </div>`;
         });
         $("#collections-list").html(collectionHtml);
 
         $(".collection-card").click(function () {
-          let collectionId = $(this).data("id");
-          fetchFlashCards(collectionId);
+          selectedCollectionId = $(this).data("id");
+          fetchFlashCards(selectedCollectionId);
+
+          // ✅ Show the Add Flash Card button and update its link
+          $("#add-flashcard-btn").attr("href", `/collections/${selectedCollectionId}/flashcards/new`).show();
         });
       });
     }
@@ -74,10 +88,10 @@
         } else {
           flashcards.forEach(card => {
             flashcardHtml += `
-                                <div class="flash-card">
-                                    <p><strong>Front:</strong> ${card.frontFace}</p>
-                                    <p><strong>Back:</strong> ${card.backFace}</p>
-                                </div>`;
+                            <div class="flash-card">
+                                <p><strong>Front:</strong> ${card.frontFace}</p>
+                                <p><strong>Back:</strong> ${card.backFace}</p>
+                            </div>`;
           });
         }
         $("#flashcards-container").html(flashcardHtml);
