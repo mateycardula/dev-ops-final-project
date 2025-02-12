@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flashcards-service
+spec:
+  selector:
+    app: flashcards-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flashcards-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flashcards-app
+  template:
+    metadata:
+      labels:
+        app: flashcards-app
+    spec:
+      containers:
+        - name: flashcards-app
+          image: mateycardula18/flashcards:latest
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/flashcards"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "admin"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "password"
+          ports:
+            - containerPort: 8080
