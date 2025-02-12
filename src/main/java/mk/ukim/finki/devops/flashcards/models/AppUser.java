@@ -1,11 +1,15 @@
 package mk.ukim.finki.devops.flashcards.models;
+
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Table(name = "users")
 public class AppUser {
     @Id
@@ -18,20 +22,6 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FlashCardCollection> collections;
 }
-
