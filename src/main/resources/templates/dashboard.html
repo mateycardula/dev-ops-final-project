@@ -5,51 +5,122 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <style>
+    body {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: white;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+      max-width: 900px;
+      background: white;
+      color: #333;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      margin-top: 50px;
+    }
+
+    h2, h3 {
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .logout-btn {
+      float: right;
+    }
+
     .collection-card {
       cursor: pointer;
       transition: transform 0.2s ease-in-out;
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
     }
+
     .collection-card:hover {
       transform: scale(1.05);
+      background: #e3e3e3;
     }
+
+    .collection-icon {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
     .flash-card {
       border: 1px solid #ddd;
-      padding: 10px;
-      margin: 5px 0;
+      padding: 15px;
+      border-radius: 8px;
       background: #f8f9fa;
+      text-align: center;
+      transition: 0.3s;
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
     }
+
+    .flash-card:hover {
+      background: #e3e3e3;
+    }
+
+    .flash-card .back {
+      display: none;
+      font-weight: normal;
+      color: #666;
+    }
+
     .btn-add-flashcard {
-      display: none; /* Initially hidden */
+      display: none;
+    }
+
+    .no-flashcards {
+      text-align: center;
+      color: #777;
+      font-size: 16px;
     }
   </style>
 </head>
-<body class="container mt-4">
-<h2>Welcome, <span th:text="${username}"></span>!</h2>
-<p>You are now logged in.</p>
+<body>
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2>Flashcards Dashboard</h2>
+    <form action="/auth/logout" method="post">
+      <button type="submit" class="btn btn-danger logout-btn">Logout</button>
+    </form>
+  </div>
 
-<form action="/auth/logout" method="post">
-  <button type="submit" class="btn btn-danger">Logout</button>
-</form>
+  <p class="text-center">Welcome, <span th:text="${username}"></span>! Start learning by selecting a collection.</p>
 
-<hr>
+  <hr>
 
-<div class="d-flex justify-content-between align-items-center">
-  <h3>Your Collections</h3>
-  <a href="/collections/new" class="btn btn-primary">+ Add Collection</a>
-</div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Your Collections</h3>
+    <a href="/collections/new" class="btn btn-primary">+ Add Collection</a>
+  </div>
 
-<div id="collections-list" class="row">
-</div>
+  <div id="collections-list" class="row">
+    <!-- Collections will be dynamically inserted here -->
+  </div>
 
-<hr>
+  <hr>
 
-<div class="d-flex justify-content-between align-items-center">
-  <h3>Flash Cards</h3>
-  <a id="add-flashcard-btn" href="#" class="btn btn-success btn-add-flashcard">+ Add Flash Card</a>
-</div>
+  <div id="flashcard-section" class="d-none">
+    <div class="d-flex justify-content-between align-items-center">
+      <h3>Flash Cards</h3>
+      <a id="add-flashcard-btn" href="#" class="btn btn-success btn-add-flashcard">+ Add Flash Card</a>
+    </div>
 
-<div id="flashcards-container">
-  <p>Select a collection to view its flash cards.</p>
+    <div id="flashcards-container">
+      <p class="no-flashcards">Select a collection to view its flash cards.</p>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -60,22 +131,28 @@
     function fetchCollections() {
       $.get("/api/collections", function (collections) {
         let collectionHtml = '';
-        collections.forEach(collection => {
-          collectionHtml += `
-                    <div class="col-md-4">
-                        <div class="card collection-card p-3 mb-3" data-id="${collection.id}">
-                            <h5 class="card-title">${collection.name}</h5>
-                        </div>
-                    </div>`;
-        });
+        if (collections.length === 0) {
+          collectionHtml = `<p class="text-center text-muted">You have no collections yet. Start by creating one.</p>`;
+        } else {
+          collections.forEach(collection => {
+            collectionHtml += `
+              <div class="col-md-4">
+                <div class="collection-card p-3 mb-3" data-id="${collection.id}">
+                  <div class="collection-icon">📚</div>
+                  <h5 class="card-title">${collection.name}</h5>
+                </div>
+              </div>`;
+          });
+        }
         $("#collections-list").html(collectionHtml);
 
         $(".collection-card").click(function () {
-          selectedCollectionId = $(this).data("id"); // ✅ Set the ID before using it
+          selectedCollectionId = $(this).data("id");
 
-          if (selectedCollectionId) { // ✅ Ensure ID is valid
+          if (selectedCollectionId) {
             fetchFlashCards(selectedCollectionId);
             $("#add-flashcard-btn").attr("href", `/collections/${selectedCollectionId}/flashcards/new`).show();
+            $("#flashcard-section").removeClass("d-none");
           } else {
             console.error("Error: No collection ID found.");
           }
@@ -87,17 +164,24 @@
       $.get(`/api/collections/${collectionId}/flashcards`, function (flashcards) {
         let flashcardHtml = '';
         if (flashcards.length === 0) {
-          flashcardHtml += `<p>No flash cards in this collection.</p>`;
+          flashcardHtml = `<p class="no-flashcards">No flash cards in this collection.</p>`;
         } else {
           flashcards.forEach(card => {
             flashcardHtml += `
-                        <div class="flash-card">
-                            <p><strong>Front:</strong> ${card.frontFace}</p>
-                            <p><strong>Back:</strong> ${card.backFace}</p>
-                        </div>`;
+              <div class="flash-card">
+                <p class="front">${card.frontFace}</p>
+                <p class="back">${card.backFace}</p>
+              </div>`;
           });
         }
         $("#flashcards-container").html(flashcardHtml);
+
+        $(".flash-card").click(function () {
+          let front = $(this).find(".front");
+          let back = $(this).find(".back");
+          front.toggle();
+          back.toggle();
+        });
       });
     }
   });
