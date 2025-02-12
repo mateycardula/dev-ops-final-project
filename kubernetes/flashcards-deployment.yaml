@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: flashcards-app
-          image: mateycardula18/flashcards:v1.0.4
+          image: mateycardula18/flashcards:v1.0.5
           imagePullPolicy: Always
           env:
             - name: SPRING_DATASOURCE_URL
