@@ -19,10 +19,3 @@ spec:
                 name: flashcards-service
                 port:
                   number: 80
-          - path: /dashboard
-            pathType: Prefix
-            backend:
-              service:
-                name: flashcards-service
-                port:
-                  number: 80
