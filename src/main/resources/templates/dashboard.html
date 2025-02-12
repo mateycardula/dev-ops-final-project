@@ -45,7 +45,7 @@
 
 <div class="d-flex justify-content-between align-items-center">
   <h3>Flash Cards</h3>
-  <a id="add-flashcard-btn" href="#" class="btn btn-success btn-add-flashcard">+ Add Flash Card</a> <!-- ✅ Add Flash Card Button -->
+  <a id="add-flashcard-btn" href="#" class="btn btn-success btn-add-flashcard">+ Add Flash Card</a>
 </div>
 
 <div id="flashcards-container">
@@ -62,20 +62,23 @@
         let collectionHtml = '';
         collections.forEach(collection => {
           collectionHtml += `
-                        <div class="col-md-4">
-                            <div class="card collection-card p-3 mb-3" data-id="${collection.id}">
-                                <h5 class="card-title">${collection.name}</h5>
-                            </div>
-                        </div>`;
+                    <div class="col-md-4">
+                        <div class="card collection-card p-3 mb-3" data-id="${collection.id}">
+                            <h5 class="card-title">${collection.name}</h5>
+                        </div>
+                    </div>`;
         });
         $("#collections-list").html(collectionHtml);
 
         $(".collection-card").click(function () {
-          selectedCollectionId = $(this).data("id");
-          fetchFlashCards(selectedCollectionId);
+          selectedCollectionId = $(this).data("id"); // ✅ Set the ID before using it
 
-          // ✅ Show the Add Flash Card button and update its link
-          $("#add-flashcard-btn").attr("href", `/collections/${selectedCollectionId}/flashcards/new`).show();
+          if (selectedCollectionId) { // ✅ Ensure ID is valid
+            fetchFlashCards(selectedCollectionId);
+            $("#add-flashcard-btn").attr("href", `/collections/${selectedCollectionId}/flashcards/new`).show();
+          } else {
+            console.error("Error: No collection ID found.");
+          }
         });
       });
     }
@@ -88,10 +91,10 @@
         } else {
           flashcards.forEach(card => {
             flashcardHtml += `
-                            <div class="flash-card">
-                                <p><strong>Front:</strong> ${card.frontFace}</p>
-                                <p><strong>Back:</strong> ${card.backFace}</p>
-                            </div>`;
+                        <div class="flash-card">
+                            <p><strong>Front:</strong> ${card.frontFace}</p>
+                            <p><strong>Back:</strong> ${card.backFace}</p>
+                        </div>`;
           });
         }
         $("#flashcards-container").html(flashcardHtml);

@@ -1,5 +1,6 @@
 package mk.ukim.finki.devops.flashcards.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,5 +23,6 @@ public class FlashCard {
 
     @ManyToOne
     @JoinColumn(name = "collection_id", nullable = false)
+    @JsonBackReference
     private FlashCardCollection collection;
 }
