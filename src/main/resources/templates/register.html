@@ -2,20 +2,142 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Register</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .register-container {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+      width: 350px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 24px;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .error {
+      background-color: #ffe5e5;
+      color: #d8000c;
+      border: 1px solid #d8000c;
+    }
+
+    .success {
+      background-color: #eaffea;
+      color: #2d8a30;
+      border: 1px solid #2d8a30;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    label {
+      font-weight: bold;
+      color: #555;
+      font-size: 14px;
+      margin-top: 10px;
+      align-self: flex-start;
+    }
+
+    input {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 16px;
+      transition: 0.3s;
+      text-align: center;
+    }
+
+    input:focus {
+      border-color: #6a11cb;
+      outline: none;
+      box-shadow: 0 0 5px rgba(106, 17, 203, 0.3);
+    }
+
+    button {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 15px;
+      width: 100%;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #5a0eb5, #1f66d1);
+    }
+
+    .login-link {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .login-link a {
+      color: #6a11cb;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-<h2>Register</h2>
 
-<div th:if="${errorMessage}" style="color: red;">
-  <p th:text="${errorMessage}"></p>
+<div class="register-container">
+  <h2>Register</h2>
+
+  <div th:if="${errorMessage}" class="message error">
+    <p th:text="${errorMessage}"></p>
+  </div>
+
+  <div th:if="${successMessage}" class="message success">
+    <p th:text="${successMessage}"></p>
+  </div>
+
+  <form action="/auth/register" method="post">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+
+    <label for="confirmPassword">Confirm Password</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <p class="login-link">Already have an account? <a href="/auth/login">Login here</a></p>
 </div>
 
-<form action="/auth/register" method="post">
-  <label>Username: <input type="text" name="username" required></label><br>
-  <label>Password: <input type="password" name="password" required></label><br>
-  <button type="submit">Register</button>
-</form>
-
-<p>Already have an account? <a href="/auth/login">Login here</a></p>
 </body>
 </html>
